@@ -7,7 +7,6 @@ import { produce } from 'immer';
 import * as React from 'react';
 
 import { DiagramWrapper } from './components/DiagramWrapper';
-import { SelectionInspector } from './components/SelectionInspector';
 
 import './App.css';
 
@@ -19,6 +18,10 @@ import './App.css';
 interface AppState {
   nodeDataArray: Array<go.ObjectData>;
   linkDataArray: Array<go.ObjectData>;
+  nodeDataArray1: Array<go.ObjectData>;
+  linkDataArray1: Array<go.ObjectData>;
+  nodeDataArray2: Array<go.ObjectData>;
+  linkDataArray2: Array<go.ObjectData>;
   modelData: go.ObjectData;
   selectedData: go.ObjectData | null;
   skipsDiagramUpdate: boolean;
@@ -39,6 +42,31 @@ class App extends React.Component<{}, AppState> {
         { key: 3, text: 'Delta', color: 'pink', loc: '150 150' }
       ],
       linkDataArray: [
+        { key: -1, from: 0, to: 1 },
+        { key: -2, from: 0, to: 2 },
+        { key: -3, from: 1, to: 1 },
+        { key: -4, from: 2, to: 3 },
+        { key: -5, from: 3, to: 0 }
+      ],
+      nodeDataArray1: [
+        { key: 0, text: 'k', color: 'lightblue', loc: '0 0' },
+        { key: 1, text: 'j', color: 'orange', loc: '150 0' },
+        { key: 2, text: 'i', color: 'lightgreen', loc: '0 150' },
+        { key: 3, text: 'l', color: 'pink', loc: '150 150' }
+      ],
+      linkDataArray1: [
+        { key: -1, from: 0, to: 1 },
+        { key: -2, from: 0, to: 2 },
+        { key: -3, from: 1, to: 1 },
+        { key: -4, from: 2, to: 3 },
+        { key: -5, from: 3, to: 0 }
+      ],
+      nodeDataArray2: [
+        { key: 0, text: 'abc', color: 'lightblue', loc: '0 0' },
+        { key: 1, text: 'def', color: 'orange', loc: '150 0' },
+        { key: 2, text: 'ghi', color: 'lightgreen', loc: '0 150' },
+      ],
+      linkDataArray2: [
         { key: -1, from: 0, to: 1 },
         { key: -2, from: 0, to: 2 },
         { key: -3, from: 1, to: 1 },
@@ -257,26 +285,8 @@ class App extends React.Component<{}, AppState> {
   }
 
   public render() {
-    const selectedData = this.state.selectedData;
-    let inspector;
-    if (selectedData !== null) {
-      inspector = <SelectionInspector
-                    selectedData={this.state.selectedData}
-                    onInputChange={this.handleInputChange}
-                  />;
-    }
-
     return (
       <div>
-        <p>
-          Try moving around nodes, editing text, relinking, undoing (Ctrl-Z), etc. within the diagram
-          and you'll notice the changes are reflected in the inspector area. You'll also notice that changes
-          made in the inspector are reflected in the diagram. If you use the React dev tools,
-          you can inspect the React state and see it updated as changes happen.
-        </p>
-        <p>
-          Check out the <a href='https://gojs.net/latest/intro/react.html' target='_blank' rel='noopener noreferrer'>Intro page on using GoJS with React</a> for more information.
-        </p>
         <DiagramWrapper
           nodeDataArray={this.state.nodeDataArray}
           linkDataArray={this.state.linkDataArray}
@@ -285,15 +295,22 @@ class App extends React.Component<{}, AppState> {
           onDiagramEvent={this.handleDiagramEvent}
           onModelChange={this.handleModelChange}
         />
-        <label>
-          Allow Relinking?
-          <input
-            type='checkbox'
-            id='relink'
-            checked={this.state.modelData.canRelink}
-            onChange={this.handleRelinkChange} />
-        </label>
-        {inspector}
+        <DiagramWrapper
+          nodeDataArray={this.state.nodeDataArray1}
+          linkDataArray={this.state.linkDataArray1}
+          modelData={this.state.modelData}
+          skipsDiagramUpdate={this.state.skipsDiagramUpdate}
+          onDiagramEvent={this.handleDiagramEvent}
+          onModelChange={this.handleModelChange}
+        />
+        <DiagramWrapper
+          nodeDataArray={this.state.nodeDataArray2}
+          linkDataArray={this.state.linkDataArray2}
+          modelData={this.state.modelData}
+          skipsDiagramUpdate={this.state.skipsDiagramUpdate}
+          onDiagramEvent={this.handleDiagramEvent}
+          onModelChange={this.handleModelChange}
+        />
       </div>
     );
   }

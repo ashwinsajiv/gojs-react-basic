@@ -6,8 +6,6 @@ import * as go from 'gojs';
 import { ReactDiagram } from 'gojs-react';
 import * as React from 'react';
 
-import { GuidedDraggingTool } from '../GuidedDraggingTool';
-
 import './Diagram.css';
 
 interface DiagramProps {
@@ -67,60 +65,37 @@ export class DiagramWrapper extends React.Component<DiagramProps, {}> {
       $(go.Diagram,
         {
           'undoManager.isEnabled': true,  // must be set to allow for model change listening
-          // 'undoManager.maxHistoryLength': 0,  // uncomment disable undo/redo functionality
-          'clickCreatingTool.archetypeNodeData': { text: 'new node', color: 'lightblue' },
-          draggingTool: new GuidedDraggingTool(),  // defined in GuidedDraggingTool.ts
-          'draggingTool.horizontalGuidelineColor': 'blue',
-          'draggingTool.verticalGuidelineColor': 'blue',
-          'draggingTool.centerGuidelineColor': 'green',
-          'draggingTool.guidelineWidth': 1,
-          layout: $(go.ForceDirectedLayout),
-          model: $(go.GraphLinksModel,
-            {
-              linkKeyProperty: 'key',  // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
-              // positive keys for nodes
-              makeUniqueKeyFunction: (m: go.Model, data: any) => {
-                let k = data.key || 1;
-                while (m.findNodeDataForKey(k)) k++;
-                data.key = k;
-                return k;
-              },
-              // negative keys for links
-              makeUniqueLinkKeyFunction: (m: go.GraphLinksModel, data: any) => {
-                let k = data.key || -1;
-                while (m.findLinkDataForKey(k)) k--;
-                data.key = k;
-                return k;
-              }
-            })
+          'undoManager.maxHistoryLength': 0,  // uncomment disable undo/redo functionality
+          model: $(go.GraphLinksModel, {
+              linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
+          }),
+          "autoScrollRegion": 0,
+          "allowMove": false,
         });
 
-    // define a simple Node template
-    diagram.nodeTemplate =
-      $(go.Node, 'Auto',  // the Shape will go around the TextBlock
-        new go.Binding('location', 'loc', go.Point.parse).makeTwoWay(go.Point.stringify),
-        $(go.Shape, 'RoundedRectangle',
-          {
-            name: 'SHAPE', fill: 'white', strokeWidth: 0,
-            // set the port properties:
-            portId: '', fromLinkable: true, toLinkable: true, cursor: 'pointer'
-          },
-          // Shape.fill is bound to Node.data.color
-          new go.Binding('fill', 'color')),
-        $(go.TextBlock,
-          { margin: 8, editable: true, font: '400 .875rem Roboto, sans-serif' },  // some room around the text
-          new go.Binding('text').makeTwoWay()
-        )
+        diagram.nodeTemplate = $(
+          go.Node,
+          "Auto", // the Shape will go around the TextBlock
+          { background: "#e0e0e0", height: 96, width: 256 },
+          $(
+              go.TextBlock, "name",
+              { margin: go.Margin.parse("32 0 32 0"), stroke: "black", font: "24px roboto", textAlign: "center" },
+              new go.Binding("text", "text")
+          )
       );
 
-    // relinking depends on modelData
-    diagram.linkTemplate =
-      $(go.Link,
-        new go.Binding('relinkableFrom', 'canRelink').ofModel(),
-        new go.Binding('relinkableTo', 'canRelink').ofModel(),
-        $(go.Shape),
-        $(go.Shape, { toArrow: 'Standard' })
-      );
+      diagram.linkTemplate = $(
+          go.Link,
+          { routing: go.Link.AvoidsNodes, corner: 3 },
+          $(
+              go.Shape, // the link's path shape
+              { strokeWidth: 2, stroke: "#666666" }
+          ),
+          $(
+              go.Shape,   // the arrowhead
+              { toArrow: "Standard" }
+          )
+        );
 
     return diagram;
   }
