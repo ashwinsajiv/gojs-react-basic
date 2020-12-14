@@ -5,7 +5,7 @@
 import * as go from 'gojs';
 import { produce } from 'immer';
 import * as React from 'react';
-
+import { RecursiveTreeView} from './components/RecursiveTreeView'
 import { DiagramWrapper } from './components/DiagramWrapper';
 
 import './App.css';
@@ -18,10 +18,6 @@ import './App.css';
 interface AppState {
   nodeDataArray: Array<go.ObjectData>;
   linkDataArray: Array<go.ObjectData>;
-  nodeDataArray1: Array<go.ObjectData>;
-  linkDataArray1: Array<go.ObjectData>;
-  nodeDataArray2: Array<go.ObjectData>;
-  linkDataArray2: Array<go.ObjectData>;
   modelData: go.ObjectData;
   selectedData: go.ObjectData | null;
   skipsDiagramUpdate: boolean;
@@ -36,42 +32,143 @@ class App extends React.Component<{}, AppState> {
     super(props);
     this.state = {
       nodeDataArray: [
-        { key: 0, text: 'Alpha', color: 'lightblue', loc: '0 0' },
-        { key: 1, text: 'Beta', color: 'orange', loc: '150 0' },
-        { key: 2, text: 'Gamma', color: 'lightgreen', loc: '0 150' },
-        { key: 3, text: 'Delta', color: 'pink', loc: '150 150' }
+        {
+          expanded: true,
+          group: "A",
+          highlightColorPrimary: "#FF0000",
+          highlightColorSecondary: "#FF6666",
+          isGroup: true,
+          key: "AF",
+          label: "F",
+          visible: true
+        },
+        {
+          expanded: true,
+          group: "AF",
+          isGroup: false,
+          key: "AFT",
+          label: "T",
+          visible: true
+        },
+        {
+          expanded: true,
+          group: "AF",
+          isGroup: true,
+          key: "AFA",
+          label: "A",
+          labelColor: "#FF0000",
+          labelColorExpanded: "#00FF00",
+          labelExpanded: "A Expanded",
+          visible: true
+        },
+        {
+          bgColor: "#FFFFFF",
+          expanded: true,
+          group: "AF",
+          isGroup: true,
+          key: "AFTr",
+          label: "Tr",
+          visible: true
+        },
+        {
+          expanded: true,
+          group: "AF",
+          headingColor: "#999999",
+          isGroup: true,
+          key: "AFC",
+          label: "C",
+          visible: true
+        },
+        {
+          bgColor: "#FFFFFF",
+          bgColorExpanded: "#DDDDDD",
+          expanded: true,
+          group: "AF",
+          isGroup: true,
+          key: "AFE",
+          label: "E",
+          visible: true
+        },
+        {
+          bgColor: "#FFFFFF",
+          expanded: true,
+          group: "AFA",
+          isGroup: false,
+          key: "AFAS",
+          label: "S",
+          visible: true
+        },
+        {
+          bgColor: "#FFFFFF",
+          bgColorExpanded: "#DDDDDD",
+          expandable: true,
+          expanded: true,
+          group: "AFTr",
+          isGroup: false,
+          key: "AFTrS",
+          label: "S",
+          visible: true
+        },
+        {
+          expanded: true,
+          group: "AFC",
+          isGroup: false,
+          key: "AFCS",
+          label: "S",
+          visible: true
+        },
+        {
+          expanded: true,
+          group: "AFE",
+          isGroup: false,
+          key: "AFEG",
+          label: "GCS",
+          visible: true
+        },
+        {
+          bgColor: "#FFFFFF",
+          bgColorExpanded: "#DDDDDD",
+          expanded: true,
+          group: "AFE",
+          isGroup: false,
+          key: "AFES",
+          label: "S",
+          visible: true
+        },
+        {
+          expanded: true,
+          isGroup: true,
+          key: "A",
+          label: "A",
+          visibl: true
+        }
       ],
       linkDataArray: [
-        { key: -1, from: 0, to: 1 },
-        { key: -2, from: 0, to: 2 },
-        { key: -3, from: 1, to: 1 },
-        { key: -4, from: 2, to: 3 },
-        { key: -5, from: 3, to: 0 }
-      ],
-      nodeDataArray1: [
-        { key: 0, text: 'k', color: 'lightblue', loc: '0 0' },
-        { key: 1, text: 'j', color: 'orange', loc: '150 0' },
-        { key: 2, text: 'i', color: 'lightgreen', loc: '0 150' },
-        { key: 3, text: 'l', color: 'pink', loc: '150 150' }
-      ],
-      linkDataArray1: [
-        { key: -1, from: 0, to: 1 },
-        { key: -2, from: 0, to: 2 },
-        { key: -3, from: 1, to: 1 },
-        { key: -4, from: 2, to: 3 },
-        { key: -5, from: 3, to: 0 }
-      ],
-      nodeDataArray2: [
-        { key: 0, text: 'abc', color: 'lightblue', loc: '0 0' },
-        { key: 1, text: 'def', color: 'orange', loc: '150 0' },
-        { key: 2, text: 'ghi', color: 'lightgreen', loc: '0 150' },
-      ],
-      linkDataArray2: [
-        { key: -1, from: 0, to: 1 },
-        { key: -2, from: 0, to: 2 },
-        { key: -3, from: 1, to: 1 },
-        { key: -4, from: 2, to: 3 },
-        { key: -5, from: 3, to: 0 }
+        {
+          color: "#FF0000",
+          from: "AFAS",
+          key: "1",
+          label: "HTTPS",
+          labelColor: "#FF6666",
+          to: "AFCS",
+          visible: true
+        },
+        {
+          from: "AFAS",
+          highlightColorPrimary: "#FF0000",
+          highlightColorSecondary: "#FF6666",
+          key: "2",
+          label: "",
+          to: "AFES",
+          visible: true
+        },
+        {
+          from: "AFA",
+          key: "3",
+          label: "",
+          to: "AFT",
+          visible: true
+        }
       ],
       modelData: {
         canRelink: true
@@ -287,25 +384,10 @@ class App extends React.Component<{}, AppState> {
   public render() {
     return (
       <div>
+        <RecursiveTreeView/>
         <DiagramWrapper
           nodeDataArray={this.state.nodeDataArray}
           linkDataArray={this.state.linkDataArray}
-          modelData={this.state.modelData}
-          skipsDiagramUpdate={this.state.skipsDiagramUpdate}
-          onDiagramEvent={this.handleDiagramEvent}
-          onModelChange={this.handleModelChange}
-        />
-        <DiagramWrapper
-          nodeDataArray={this.state.nodeDataArray1}
-          linkDataArray={this.state.linkDataArray1}
-          modelData={this.state.modelData}
-          skipsDiagramUpdate={this.state.skipsDiagramUpdate}
-          onDiagramEvent={this.handleDiagramEvent}
-          onModelChange={this.handleModelChange}
-        />
-        <DiagramWrapper
-          nodeDataArray={this.state.nodeDataArray2}
-          linkDataArray={this.state.linkDataArray2}
           modelData={this.state.modelData}
           skipsDiagramUpdate={this.state.skipsDiagramUpdate}
           onDiagramEvent={this.handleDiagramEvent}
