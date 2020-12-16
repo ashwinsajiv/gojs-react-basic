@@ -381,10 +381,23 @@ class App extends React.Component<{}, AppState> {
     this.setState({ modelData: { canRelink: value }, skipsDiagramUpdate: false });
   }
 
-  public render() {
+  visibilityChange = (nodeId: any) =>  {
+    console.log(nodeId)
+    let nodeDataArrayx = JSON.parse(JSON.stringify(this.state.nodeDataArray))
+    nodeDataArrayx.forEach((node) =>{
+      if (node.key == nodeId) {
+        console.log(node.visible)
+        node.visible = !node.visible
+      }
+    })
+    this.setState({ nodeDataArray: nodeDataArrayx})
+    this.refreshNodeIndex(nodeDataArrayx)
+    console.log(this.state.nodeDataArray)
+  }
+
+  render() {
     return (
       <div>
-        <RecursiveTreeView/>
         <DiagramWrapper
           nodeDataArray={this.state.nodeDataArray}
           linkDataArray={this.state.linkDataArray}
@@ -392,6 +405,9 @@ class App extends React.Component<{}, AppState> {
           skipsDiagramUpdate={this.state.skipsDiagramUpdate}
           onDiagramEvent={this.handleDiagramEvent}
           onModelChange={this.handleModelChange}
+        />
+        <RecursiveTreeView
+          onVisibilityChange={this.visibilityChange}
         />
       </div>
     );

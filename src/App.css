@@ -9,3 +9,8 @@ p {
   font: 300 1rem Roboto, helvetica, sans-serif;
   color: #212121; /* Grey 900 */
 }
+
+div{
+  display:inline-block;
+  padding: 10;
+}

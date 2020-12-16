@@ -221,6 +221,7 @@ export class DiagramWrapper extends React.Component<DiagramProps, {}> {
             )
         )  // end Vertical Panel
     );  // end Group !end-diagram
+
     return diagram;
   }
 
