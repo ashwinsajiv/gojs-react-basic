@@ -62,7 +62,6 @@ class App extends React.Component<{}, AppState> {
           visible: true
         },
         {
-          bgColor: "#FFFFFF",
           expanded: true,
           group: "AF",
           isGroup: true,
@@ -80,8 +79,6 @@ class App extends React.Component<{}, AppState> {
           visible: true
         },
         {
-          bgColor: "#FFFFFF",
-          bgColorExpanded: "#DDDDDD",
           expanded: true,
           group: "AF",
           isGroup: true,
@@ -90,7 +87,6 @@ class App extends React.Component<{}, AppState> {
           visible: true
         },
         {
-          bgColor: "#FFFFFF",
           expanded: true,
           group: "AFA",
           isGroup: false,
@@ -99,8 +95,6 @@ class App extends React.Component<{}, AppState> {
           visible: true
         },
         {
-          bgColor: "#FFFFFF",
-          bgColorExpanded: "#DDDDDD",
           expandable: true,
           expanded: true,
           group: "AFTr",
@@ -126,8 +120,6 @@ class App extends React.Component<{}, AppState> {
           visible: true
         },
         {
-          bgColor: "#FFFFFF",
-          bgColorExpanded: "#DDDDDD",
           expanded: true,
           group: "AFE",
           isGroup: false,
@@ -140,7 +132,7 @@ class App extends React.Component<{}, AppState> {
           isGroup: true,
           key: "A",
           label: "A",
-          visibl: true
+          visible: true,
         }
       ],
       linkDataArray: [
@@ -167,7 +159,7 @@ class App extends React.Component<{}, AppState> {
           key: "3",
           label: "",
           to: "AFT",
-          visible: true
+          visible: true,
         }
       ],
       modelData: {
@@ -335,7 +327,6 @@ class App extends React.Component<{}, AppState> {
         if (modifiedModelData) {
           draft.modelData = modifiedModelData;
         }
-        draft.skipsDiagramUpdate = true;  // the GoJS model already knows about these updates
       })
     );
   }
@@ -382,17 +373,17 @@ class App extends React.Component<{}, AppState> {
   }
 
   visibilityChange = (nodeId: any) =>  {
-    console.log(nodeId)
     let nodeDataArrayx = JSON.parse(JSON.stringify(this.state.nodeDataArray))
     nodeDataArrayx.forEach((node) =>{
       if (node.key == nodeId) {
-        console.log(node.visible)
         node.visible = !node.visible
       }
     })
-    this.setState({ nodeDataArray: nodeDataArrayx})
-    this.refreshNodeIndex(nodeDataArrayx)
-    console.log(this.state.nodeDataArray)
+    let obj: go.IncrementalData 
+    obj = {
+      modifiedNodeData: nodeDataArrayx
+    }
+    this.handleModelChange(obj)
   }
 
   render() {
@@ -408,6 +399,7 @@ class App extends React.Component<{}, AppState> {
         />
         <RecursiveTreeView
           onVisibilityChange={this.visibilityChange}
+          nodeDataArray={this.state.nodeDataArray}
         />
       </div>
     );

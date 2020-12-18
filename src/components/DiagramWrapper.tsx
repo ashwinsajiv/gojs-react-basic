@@ -52,6 +52,15 @@ export class DiagramWrapper extends React.Component<DiagramProps, {}> {
     }
   }
 
+  public updateDiagram() {
+    if (!this.diagramRef.current) return;
+    const diagram = this.diagramRef.current.getDiagram();
+    diagram.startTransaction();
+    diagram.updateAllRelationshipsFromData();
+    diagram.updateAllTargetBindings();
+    diagram.commitTransaction("update");
+  }
+
   /**
    * Diagram initialization method, which is passed to the ReactDiagram component.
    * This method is responsible for making the diagram and initializing the model, any templates,

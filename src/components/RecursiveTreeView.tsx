@@ -5,68 +5,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import App from '../App';
-
-const data = {
-  id: 'A',
-  name: 'A',
-  children: [
-    {
-      id: 'AF',
-      name: 'F',
-      children: [
-        {
-          id: 'AFT',
-          name: 'T',
-        },
-        {
-          id: 'AFA',
-          name: 'A',
-          children: [
-            {
-              id: 'AFAS',
-              name: 'S'
-            }
-          ],
-        },
-        {
-          id: 'AFTr',
-          name: 'Tr',
-          children: [
-            {
-              id: 'AFTrS',
-              name: 'S',
-            }
-          ],
-        },
-        {
-          id: 'AFC',
-          name: 'C',
-          children: [
-            {
-              id: 'AFCS',
-              name: 'S'
-            },
-          ],
-        },
-        {
-          id: 'AFE',
-          name: 'E',
-          children: [
-            {
-              id: 'AFES',
-              name: 'S'
-            },
-            {
-              id: 'AFEG',
-              name: 'GCS'
-            }
-          ],
-        },
-      ],
-    },
-  ],
-};
+import _ from 'lodash'
 
 const useStyles = makeStyles({
   root: {
@@ -80,10 +19,24 @@ export function RecursiveTreeView(props) {
   const classes = useStyles();
 
   const renderTree = (nodes) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name} endIcon={<VisibilityIcon onClick={() => props.onVisibilityChange(nodes.id)}/>}>
+    <TreeItem key={nodes.key} nodeId={nodes.key} label={nodes.label} endIcon={<VisibilityIcon onClick={() => props.onVisibilityChange(nodes.key)}/>}>
       {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
     </TreeItem>
   );
+
+  const updateData = (d) => {
+    var groupedByParents = _.groupBy(d, 'group');
+    var catsById = _.keyBy(d, 'key');
+    _.each(_.omit(groupedByParents, undefined), function(children, parentId) {
+      catsById[parentId].children = children; 
+    });
+    _.each(catsById, function(cat) {
+      // _.compact below is just for removing null posts
+      cat.children = _.compact(_.union(cat.children, cat.posts));
+      // optionally, you can also delete cat.posts here.
+  });
+    return groupedByParents[undefined][0]
+  }
 
   return (
     <TreeView
@@ -92,7 +45,7 @@ export function RecursiveTreeView(props) {
       defaultExpanded={['root']}
       defaultExpandIcon={<ChevronRightIcon />}
     >
-      {renderTree(data)}
+      {renderTree(updateData(JSON.parse(JSON.stringify(props.nodeDataArray))))}
     </TreeView>
   );
 }
